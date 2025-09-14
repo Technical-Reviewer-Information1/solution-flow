@@ -7,7 +7,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("問題解決の手順")
+st.title("問題解決の手順（pp.206-208）")
 st.caption("Created by Dit-Lab.(Daiki ITO)")
 st.caption("Supported by Tomoaki ATSUMI")
 
