@@ -102,6 +102,34 @@
         a: 1, why: '線でつないで広げるのがマインドマップ、分類してまとめるのがKJ法です。' }
     ], '本文の答えは【ウ】① です。');
     window.Terms.glossary($('glossBox'), ['問題解決', 'PDCAサイクル', 'ブレーンストーミング', 'マインドマップ', 'KJ法', '情報デザイン']);
+    Worksheet.make('wsBox', {
+      name: 'solution-flow',
+      fields: [
+        { id: 'p1', label: '① 問題の明確化', hint: '「何が」「どれくらい」困っているかを、数や事実で書く。', rows: 3,
+          ph: '例：昼休みの図書室が混んでいて、20分並んでも借りられない日が週3日ある' },
+        { id: 'p2', label: '② 情報の収集・整理', hint: 'どんなデータを集めれば原因が分かるか。', rows: 3,
+          ph: '例：曜日ごとの利用者数を1週間数える／貸出手続きにかかる時間を計る' },
+        { id: 'p3', label: '③ 解決策の検討', hint: 'できるだけ多く。実現しやすさは後で考える。', rows: 3,
+          ph: '例：貸出機を増やす／予約制にする／昼休みを学年でずらす' },
+        { id: 'p4', label: '④ 解決策の決定', hint: 'どれを選ぶか、選んだ理由（効果・費用・実現しやすさ）。', rows: 3,
+          ph: '例：予約制。お金がかからず、来週から試せるから' },
+        { id: 'p5', label: '⑤ 実行と振り返り（Check）', hint: '何をどう測れば「よくなった」と言えるか。', rows: 3,
+          ph: '例：2週間後にもう一度待ち時間を計り、20分→5分になったかを見る' },
+        { id: 'p6', label: '次のAction（改善）', hint: 'うまくいかなかったら、次に何を変えるか。', rows: 2,
+          ph: '例：予約が埋まりすぎたら、1人あたりの冊数を制限する' }
+      ],
+      build: function (v, e) {
+        return '<h4>問題解決シート</h4><dl>' +
+          '<dt>Plan ① 問題の明確化</dt><dd>' + e(v.p1) + '</dd>' +
+          '<dt>Plan ② 情報の収集・整理</dt><dd>' + e(v.p2) + '</dd>' +
+          '<dt>Plan ③ 解決策の検討</dt><dd>' + e(v.p3) + '</dd>' +
+          '<dt>Plan ④ 解決策の決定</dt><dd>' + e(v.p4) + '</dd>' +
+          '<dt>Do・Check ⑤ 実行と振り返り</dt><dd>' + e(v.p5) + '</dd>' +
+          '<dt>Action 次の改善</dt><dd>' + e(v.p6) + '</dd></dl>';
+      },
+      note: '⑤に「何を測るか」が書けていれば、その探究は成立します。数で確かめられるかを確認しましょう。'
+    });
+
     window.Terms.attach();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
