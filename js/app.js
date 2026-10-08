@@ -72,6 +72,89 @@
     $('talkNote').textContent = 'ルールに沿っていない発言を1つ選んでください。';
   }
 
+
+  /* ===== PDCAサイクル（回る図） ===== */
+  const CYC = [
+    { k: 'P', n: 'Plan', jp: '計画', d: '何を、いつまでに、どうやるかを決めます。目標は数字で表すと、あとで確かめられます。' },
+    { k: 'D', n: 'Do',   jp: '実行', d: '決めたとおりにやってみます。記録を残しておくと、次のCheckで使えます。' },
+    { k: 'C', n: 'Check', jp: '評価', d: '目標とくらべて、できた点とできなかった点を確かめます。' },
+    { k: 'A', n: 'Action', jp: '改善', d: 'うまくいかなかった理由を考え、やり方を直します。その結果が次のPlanになります。' }
+  ];
+  let cycI = -1, cycRound = 0, cycTimer = null;
+
+  function cycSvg() {
+    const NS = 'http://www.w3.org/2000/svg';
+    const e = (t, at, tx) => { const x = document.createElementNS(NS, t);
+      for (const k in at) x.setAttribute(k, at[k]); if (tx != null) x.textContent = tx; return x; };
+    const svg = e('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': 'PDCAサイクルの図' });
+    const cx = 150, cy = 150, R = 118, r = 58;
+    CYC.forEach((s, i) => {
+      const a0 = -Math.PI / 2 + i * Math.PI / 2 + 0.045;
+      const a1 = -Math.PI / 2 + (i + 1) * Math.PI / 2 - 0.045;
+      const p = (rad, ang) => [cx + rad * Math.cos(ang), cy + rad * Math.sin(ang)];
+      const [x0, y0] = p(R, a0), [x1, y1] = p(R, a1), [x2, y2] = p(r, a1), [x3, y3] = p(r, a0);
+      svg.appendChild(e('path', { class: 'seg', 'data-i': i,
+        d: 'M' + x0 + ',' + y0 + ' A' + R + ',' + R + ' 0 0 1 ' + x1 + ',' + y1 +
+           ' L' + x2 + ',' + y2 + ' A' + r + ',' + r + ' 0 0 0 ' + x3 + ',' + y3 + ' Z' }));
+      const mid = (a0 + a1) / 2, [lx, ly] = p((R + r) / 2, mid);
+      svg.appendChild(e('text', { class: 'sl', 'data-i': i, x: lx, y: ly - 8 }, s.k));
+      svg.appendChild(e('text', { class: 'sn', 'data-i': i, x: lx, y: ly + 11 }, s.jp));
+    });
+    svg.appendChild(e('line', { class: 'hand', id: 'cycHand', x1: cx, y1: cy, x2: cx, y2: cy - R - 8 }));
+    return svg;
+  }
+
+  function cycDraw() {
+    const svg = $('cycFig').querySelector('svg');
+    svg.querySelectorAll('[data-i]').forEach(el => {
+      el.classList.toggle('on', +el.dataset.i === cycI);
+    });
+    const hand = svg.querySelector('#cycHand');
+    hand.style.transform = 'rotate(' + (cycI < 0 ? 0 : cycI * 90 + 45) + 'deg)';
+    if (cycI < 0) {
+      $('cycNow').textContent = '—';
+      $('cycDesc').textContent = '「1つ進める」を押して、サイクルを回してみましょう。';
+    } else {
+      const s = CYC[cycI];
+      $('cycNow').textContent = s.k + ' ' + s.n + '（' + s.jp + '）';
+      $('cycDesc').textContent = s.d;
+    }
+    const pct = Math.min(100, cycRound * 25);
+    $('cycRound').textContent = cycRound + ' 周目';
+    $('cycPct').textContent = '改善度 ' + pct + '%';
+    $('cycFill').style.width = pct + '%';
+    const m = $('cycMsg');
+    m.className = 'note ' + (cycRound >= 4 ? 'ok' : 'info');
+    m.innerHTML = cycRound === 0
+      ? '1周するごとに少しずつよくなります。'
+      : (cycRound >= 4
+        ? '<strong>4周目。</strong>1回で完璧にしようとせず、<strong>小さく回して少しずつ近づける</strong>のがPDCAの考え方です。'
+        : '<strong>' + cycRound + '周</strong>回りました。Actionで直したやり方が、次のPlanに引きつがれています。');
+  }
+
+  function cycNext() {
+    cycI = (cycI + 1) % 4;
+    if (cycI === 0 && $('cycNow').textContent !== '—') cycRound++;
+    else if (cycI === 0) cycRound = Math.max(cycRound, 0);
+    cycDraw();
+  }
+
+  function cycInit() {
+    $('cycFig').appendChild(cycSvg());
+    cycDraw();
+    $('cycStep').addEventListener('click', () => { cycStop(); cycNext(); });
+    $('cycReset').addEventListener('click', () => { cycStop(); cycI = -1; cycRound = 0; cycDraw(); });
+    $('cycAuto').addEventListener('click', () => {
+      if (cycTimer) { cycStop(); return; }
+      $('cycAuto').textContent = '止める';
+      cycTimer = setInterval(cycNext, 1100);
+    });
+  }
+  function cycStop() {
+    if (cycTimer) { clearInterval(cycTimer); cycTimer = null; }
+    $('cycAuto').textContent = '自動で回す';
+  }
+
   function init() {
     Quiz.order('flowBox', 'flowNote', FLOW, 'dbace', {
       tags: ['① まず', '② 次に', '③ そのあと', '④ さらに', '⑤ 最後に'],
@@ -79,6 +162,7 @@
       step: ['最初にすべきことは何でしょう。', '問題がはっきりしたら次は？', '情報を分析したら？', '解決策の案が出たら？', '最後は？'],
       why: '<br>問題解決はまず<strong>「何が問題か」をはっきりさせる</strong>ことから始まります。情報を集めてから解決策を考え、評価して決め、実行して振り返ります。本文の答えは【ア】② です。'
     });
+    cycInit();
     Quiz.order('pdcaBox', 'pdcaNote', PD, 'bcda', {
       tags: ['P　Plan（計画）', 'D　Do（実行）', 'C　Check（評価）', 'A　Action（改善）'],
       hints: ['ルールを決める', 'やってみる', '振り返る', '見直す'],

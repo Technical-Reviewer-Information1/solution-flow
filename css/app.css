@@ -39,3 +39,23 @@ table.tbl td .blankin{width:100%; max-width:none}
 .bsrules .r{border:1px solid var(--line);border-radius:3px;padding:10px;background:#fff}
 .bsrules .r .t{font-weight:700;font-size:.94rem;margin-bottom:4px}
 .bsrules .r .d{font-size:.82rem;color:var(--muted);line-height:1.7}
+
+/* --- PDCAサイクル（回る図） --- */
+.cyc{display:grid;gap:18px;align-items:center}
+@media(min-width:720px){ .cyc{grid-template-columns:300px 1fr} }
+.cycfig svg{display:block;width:100%;max-width:300px;margin:0 auto}
+.cycfig .seg{fill:#eef1f4;stroke:var(--line);stroke-width:1.2;transition:fill .45s}
+.cycfig .seg.on{fill:var(--accent)}
+.cycfig .sl{font:700 19px/1 var(--mono);fill:#4a4f57;text-anchor:middle;dominant-baseline:middle;transition:fill .45s}
+.cycfig .sl.on{fill:#fff}
+.cycfig .sn{font-size:10.5px;fill:#6b7078;text-anchor:middle;dominant-baseline:middle}
+.cycfig .sn.on{fill:#fff}
+.cycfig .hand{stroke:#c0392b;stroke-width:3;stroke-linecap:round;
+  transition:transform .45s cubic-bezier(.45,.05,.35,1);transform-origin:150px 150px}
+.cycnow{font-size:1.25rem;font-weight:700;color:var(--accent);min-height:1.5em}
+.cycdesc{font-size:.9rem;color:var(--ink-2);line-height:1.8;margin:6px 0 0;min-height:3.4em}
+.cycmeter{margin-top:14px}
+.cyclab{display:flex;justify-content:space-between;font-size:.78rem;color:var(--ink-2);margin-bottom:4px}
+.cyctrack{height:12px;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
+.cyctrack i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8aa7c4,#2f7d4f);
+  transition:width .6s cubic-bezier(.45,.05,.35,1)}

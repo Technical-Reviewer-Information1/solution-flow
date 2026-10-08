@@ -14,6 +14,26 @@
     <h2><span class="no">STEP 2</span>PDCAサイクルを回す（問2）</h2>
     <p class="desc">Plan → Do → Check → Action。<strong>くり返す</strong>ことで少しずつよくしていく方法です。</p>
     <div class="panel">
+      <div class="cyc">
+        <div class="cycfig" id="cycFig"></div>
+        <div class="cycside">
+          <div class="cycnow" id="cycNow">—</div>
+          <p class="cycdesc" id="cycDesc">「1つ進める」を押して、サイクルを回してみましょう。</p>
+          <div class="btn-row" style="margin-top:10px">
+            <button class="btn primary" id="cycStep">1つ進める ▶</button>
+            <button class="btn" id="cycAuto">自動で回す</button>
+            <button class="btn ghost" id="cycReset">最初から</button>
+          </div>
+          <div class="cycmeter">
+            <div class="cyclab"><span id="cycRound">0 周目</span><span id="cycPct">改善度 0%</span></div>
+            <div class="cyctrack"><i id="cycFill"></i></div>
+          </div>
+          <p class="note info" style="margin-top:10px" id="cycMsg">1周するごとに少しずつよくなります。</p>
+        </div>
+      </div>
+
+      <hr class="sep">
+      <p class="qhead">a〜d をPDCAサイクルの順に並べる</p>
       <div id="pdcaBox"></div>
       <div class="note" id="pdcaNote" style="margin-top:12px"></div>
       <hr class="sep">
